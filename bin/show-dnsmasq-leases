@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Output dnsmasq leases
+
+cat /var/lib/misc/dnsmasq.leases

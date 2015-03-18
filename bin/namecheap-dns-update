@@ -1,0 +1,27 @@
+#!/usr/bin/env python
+
+import socket
+import fcntl
+import struct
+import urllib2
+
+DOMAIN = "example.com"
+ACCESS_KEY = "123456789ABCDEF"
+
+def get_ip_address(ifname):
+    ''' Gets the ipaddress of the specified interface '''
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    return socket.inet_ntoa(fcntl.ioctl(
+        s.fileno(),
+        0x8915,  # SIOCGIFADDR
+        struct.pack('256s', ifname[:15])
+    )[20:24])
+
+ipaddr = get_ip_address('eth0')
+
+url = "https://dynamicdns.park-your-domain.com/update?host=%s&domain=%s&password=%s&ip=%s" % \
+    ("@", DOMAIN, ACCESS_KEY, ipaddr) 
+
+response = urllib2.urlopen(url)
+print response.read()
+
